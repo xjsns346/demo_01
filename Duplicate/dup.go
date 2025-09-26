@@ -1,48 +1,37 @@
-// 这是Go语言圣经中的练习1.4，增加了打印文件名的功能。
-// 27行 ，避免了传入多个文件时，出现重复打印。
+// dup3, 使用os.Readfile来读取文件内容，并查找重复行。
+// 原文中使用的ioutil包被废弃了，很多操作放在了os包里。
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
-	counts := make(map[string]int)
-	files := os.Args[1:] //提取命令行中的参数
-	if len(files) == 0 {
-		fmt.Println("请输入内容，按下'ctrl + z + 回车'退出。")
-		countLines(os.Stdin, counts) //如果没有传递函数名，则打开标准输入，os.Stdin也是一个文件指针类型。需要按下ctrl + z + 回车才可以退出os.Stdin
+	fmt.Println("请在参数部分输入要读取的文件路径，以空格分隔。")
+	if len(os.Args[1:]) < 1 { //通过比较长度，来判断是否输入文件路径。
+		fmt.Println("未输入文件路径。")
+		return
+	}
+	for _, file := range os.Args[1:] {
+		counts := make(map[string]int) //声明counts 来存储数据。
 
-	} else {
-		for _, file := range files {
-			f, err := os.Open(file)
-			//如果打开失败，则使用os.Fprintf,指定输出流为os.Stderr,打印错误信息。
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error :%v", err) //用于将错误信息输出到 标准错误流，区别于正常输出。适合日志或报错信息，保证和正常输出区分开。
-				continue                                 //继续循环。
+		data, err := os.ReadFile(file) //返回的data为[]byte类型。
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "报错 :%s", err)
+		}
+
+		for _, lines := range strings.Split(string(data), "\n") {
+
+			counts[lines]++
+		}
+		for lines, n := range counts {
+			if n > 1 {
+				fmt.Printf("文件名 :%s\t，重复次数 :%d\t，重复内容 :%s\n", file, n, lines)
 			}
-			countLines(f, counts)
-			counts = make(map[string]int) //清空counts中的键值对，从而避免读取文件内容重复。
-			f.Close()                     //关闭文件。
-
 		}
-	}
 
-}
-
-// 声明了一个countLines函数，参数为一个文件指针，一个map类型的键值对集合，输出了count:重复行出现的次数，line:重复行的内容。
-func countLines(f *os.File, counts map[string]int) {
-	input := bufio.NewScanner(f)
-	for input.Scan() {
-		counts[input.Text()]++
-	}
-	for line, count := range counts {
-		if count > 1 {
-			//调用f.Name()方法来获取文件名。
-			fmt.Printf("文件名：%s\t重复次数：%d\t重复内容：%s\n", f.Name(), count, line)
-		}
 	}
 
 }
