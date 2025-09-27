@@ -1,4 +1,4 @@
-//fetch函数实现，来获取URL。
+//练习1.7函数实现，使用io.copy来读取HTTP返回体。
 
 package main
 
@@ -17,13 +17,14 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error :%s", err)
 			os.Exit(1) //返回错误代码 : 1
 		}
-		content, err := io.ReadAll(res.Body)
+		//调用io.copy函数，将HTTP响应体拷贝到标准输出。
+		n, err := io.Copy(os.Stdout, res.Body)
 		defer res.Body.Close() //defer 用来注册一个函数调用，等到当前函数返回之前才执行。
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error :%s", err)
 			os.Exit(1) //返回错误代码 : 1
 		}
-		fmt.Printf("内容为%s", string(content))
+		fmt.Printf("%d的字符被复制。", n)
 	}
 
 }
