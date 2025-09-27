@@ -1,4 +1,4 @@
-//练习1.7函数实现，使用io.copy来读取HTTP返回体。
+//练习1.8函数实现，有隐患。
 
 package main
 
@@ -11,6 +11,11 @@ import (
 
 func main() {
 	for _, url := range os.Args[1:] {
+		//当传入的网址未添加协议名时，补上协议名。    存在隐患，当url的长度不足7时，会panic。
+		if url[0:7] != "http://" {
+			url = "http://" + url
+		}
+
 		//http.Get是发出一个http请求。
 		res, err := http.Get(url) //返回的res 为*http.Response类型
 		if err != nil {
