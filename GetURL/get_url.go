@@ -1,4 +1,4 @@
-//练习1.8函数实现，有隐患。
+//练习1.8函数实现，使用strings.HasPrefix()函数来判断。
 
 package main
 
@@ -7,12 +7,13 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func main() {
 	for _, url := range os.Args[1:] {
-		//当传入的网址未添加协议名时，补上协议名。    存在隐患，当url的长度不足7时，会panic。
-		if url[0:7] != "http://" {
+		//使用strings.HasPrefix()函数，不会越界（自动处理长度问题）并考虑了 HTTPS 的情况。
+		if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
 			url = "http://" + url
 		}
 
