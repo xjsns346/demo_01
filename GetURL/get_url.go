@@ -1,4 +1,4 @@
-//练习1.8函数实现，使用strings.HasPrefix()函数来判断。
+//练习1.9函数实现
 
 package main
 
@@ -31,6 +31,8 @@ func main() {
 			os.Exit(1) //返回错误代码 : 1
 		}
 		fmt.Printf("%d的字符被复制。", n)
+		//返回HTTP协议的状态码。
+		fmt.Printf("状态码为: %v", res.Status)
 	}
 
 }
