@@ -1,0 +1,2 @@
+#忽略Lissajous中生成的.gif文件。
+Lissajous\*.gif
